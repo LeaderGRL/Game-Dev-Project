@@ -8,7 +8,8 @@ namespace Script
         public enum DrawMode
         {
             NoiseMap,
-            ColourMap
+            ColourMap,
+            Mesh
         }
 
         public DrawMode drawMode;
@@ -55,6 +56,8 @@ namespace Script
                 display.DrawTexture(TextureGenerator.TextureFromHeightMap(noiseMap));
             else if (drawMode == DrawMode.ColourMap) 
                 display.DrawTexture(TextureGenerator.TextureFromColorMap(colorMap, mapWidth,mapHeight));
+            else if (drawMode == DrawMode.Mesh)
+                display.DrawMesh(MeshGenerator.GenerateTerrainMesh(noiseMap), TextureGenerator.TextureFromColorMap(colorMap, mapWidth,mapHeight));
 
         }
 
