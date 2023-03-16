@@ -52,7 +52,7 @@ namespace BehaviorTree
 
         // The virtual Evaluate method, which can be overridden by child classes
         // to define their specific behavior
-        public virtual NodeState Evaluate => NodeState.FAILURE;
+        public virtual NodeState Evaluate() => NodeState.FAILURE;
 
         // Set a key-value pair in the node's data dictionary
         public void SetData(string key, object value)
