@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Grid : MonoBehaviour
 {
+    public bool onlyDisplayPathGizmos;
     public Transform player;
     public LayerMask unwalkableLayerMask;
     public Vector2 gridWorldSize;
@@ -22,7 +23,15 @@ public class Grid : MonoBehaviour
 
         CreateGrid();
     }
-    
+
+    public int MaxSize
+    {
+        get
+        {
+            return gridSizeX * gridSizeY;
+        }
+    }
+
     void CreateGrid()
     {
         grid = new Node[gridSizeX, gridSizeY];
@@ -84,20 +93,35 @@ public class Grid : MonoBehaviour
         if (grid != null)
         {
             Node playerNode = NodeFromWorldPoint(player.transform.position);
-            foreach (Node n in grid)
-            {
-                Gizmos.color = n.walkable ? Color.white : Color.red;
-                if (playerNode == n)
-                {
-                    Gizmos.color = Color.cyan;
-                }
 
+            if (onlyDisplayPathGizmos)
+            {
                 if (path != null)
                 {
-                    if (path.Contains(n))
+                    foreach (Node n in path)
+                    {
                         Gizmos.color = Color.black;
+                        Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
+                    }
                 }
-                Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
+            }
+            else
+            {
+                foreach (Node n in grid)
+                {
+                    Gizmos.color = n.walkable ? Color.white : Color.red;
+                    if (playerNode == n)
+                    {
+                        Gizmos.color = Color.cyan;
+                    }
+
+                    if (path != null)
+                    {
+                        if (path.Contains(n))
+                            Gizmos.color = Color.black;
+                    }
+                    Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
+                }
             }
         }
     }
