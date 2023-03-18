@@ -1135,6 +1135,8 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 256
     terrainPenalty: 500
+  blurWeightSize: 6
+  obstacleProximityPenalty: 10
 --- !u!4 &990553494
 Transform:
   m_ObjectHideFlags: 0
