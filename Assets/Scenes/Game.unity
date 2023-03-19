@@ -179,7 +179,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &278374783
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,6 +194,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 813328845}
   speed: 20
+  turnSpeed: 3
+  turnDist: 5
+  stoppingDistance: 10
 --- !u!136 &278374784
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -306,7 +309,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 813328845}
-  speed: 20
+  speed: 10
+  turnSpeed: 10
+  turnDist: 5
+  stoppingDistance: 10
 --- !u!136 &287437294
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -379,7 +385,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 287437292}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.8, y: 0.9182668, z: 19.7}
+  m_LocalPosition: {x: 1.8, y: 1.81, z: 19.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -886,7 +892,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 813328841}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.77, y: 0.9182668, z: -44.4}
+  m_LocalPosition: {x: 5.77, y: 0.9182668, z: -48.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1136,7 +1142,7 @@ MonoBehaviour:
       m_Bits: 256
     terrainPenalty: 500
   blurWeightSize: 6
-  obstacleProximityPenalty: 10
+  obstacleProximityPenalty: 50
 --- !u!4 &990553494
 Transform:
   m_ObjectHideFlags: 0
@@ -1689,7 +1695,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!136 &1728913397
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1783,6 +1789,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 813328845}
   speed: 20
+  turnSpeed: 3
+  turnDist: 5
+  stoppingDistance: 10
 --- !u!1 &1748943999
 GameObject:
   m_ObjectHideFlags: 0
@@ -1899,7 +1908,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1982471708
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1914,6 +1923,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 813328845}
   speed: 20
+  turnSpeed: 3
+  turnDist: 5
+  stoppingDistance: 10
 --- !u!136 &1982471709
 CapsuleCollider:
   m_ObjectHideFlags: 0
