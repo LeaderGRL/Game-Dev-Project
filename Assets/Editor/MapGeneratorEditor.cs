@@ -1,4 +1,4 @@
-using Script;
+using Script.MapGenerator;
 using UnityEditor;
 using UnityEngine;
 

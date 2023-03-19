@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Script
+namespace Script.MapGenerator
 {
     public static class TextureGenerator
     {
