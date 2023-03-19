@@ -14,7 +14,7 @@ namespace Script.MapGenerator
 
         public DrawMode drawMode;
 
-        private const int mapChunkSize = 241;
+        public const int mapChunkSize = 241;
         [Range(0, 6)] [SerializeField] private int levelOfDetail;
         [SerializeField] private float noiseScale;
         [SerializeField] private int octaves;
