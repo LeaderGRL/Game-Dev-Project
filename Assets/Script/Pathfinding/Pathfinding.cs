@@ -13,71 +13,65 @@ public class Pathfinding : MonoBehaviour
 
     private void Awake()
     {
-        //requestManager = GetComponent<PathRequestManager>();
         grid = GetComponent<Grid>();
     }
 
-    //private void Update()
-    //{
-    //    if (Input.GetButtonDown("Jump"))
-    //    {
-    //        FindPath(seeker.position, target.position);
-    //    }
-    //}
-
-    //public void StartFindPath(Vector3 startPos, Vector3 targetPos)
-    //{
-    //    StartCoroutine(FindPath(startPos, targetPos));
-    //}
     public void FindPath(PathRequest request, Action<PathResult> callback)
     {
         Stopwatch sw = new Stopwatch();
         sw.Start();
 
+        // Initialize variables
         Vector3[] waypoints = new Vector3[0];
         bool pathSuccess = false;
-        
+
+        // Get start and end nodes from the grid
         Node startNode = grid.NodeFromWorldPoint(request.pathStart);
         Node targetNode = grid.NodeFromWorldPoint(request.pathEnd);
 
+        // Check if both start and end nodes are walkable
         if (startNode.walkable && targetNode.walkable)
         {
-            Heap<Node> openSet = new Heap<Node>(grid.MaxSize);
+            // OpenSet => Node to be evalueted
+            Heap<Node> openSet = new Heap<Node>(grid.MaxSize); 
             HashSet<Node> closedSet = new HashSet<Node>();
 
+            // Add start node to open set
             openSet.Add(startNode);
 
+            // Loop until the open set is empty
             while (openSet.Count > 0)
             {
+                // Get the node with the lowest F cost from the open set
                 Node currentNode = openSet.RemoveFirst();
-                //for (int i = 1; i < openSet.Count; i++)
-                //{
-                //    if (openSet[i].fCost < currentNode.fCost || openSet[i].fCost == currentNode.fCost && openSet[i].hCost < currentNode.hCost)
-                //    {
-                //        currentNode = openSet[i];
-                //    }
-                //}
 
-                //openSet.Remove(currentNode);
+                // Add current node to the closed set
                 closedSet.Add(currentNode);
 
+                // If we have reached the target node, stop the search
                 if (currentNode == targetNode)
                 {
+                    // Stop the timer and print the elapsed time
                     sw.Stop();
                     print("Path found : " + sw.ElapsedMilliseconds + "ms");
                     pathSuccess = true;
-                    //RetracePath(startNode, targetNode);
                     break;
                 }
 
+                // Loop through the neighbours of the current node
                 foreach (Node neighbour in grid.GetNeighbours(currentNode))
                 {
+                    // Skip this neighbour if it's not walkable or already in the closed set
                     if (!neighbour.walkable || closedSet.Contains(neighbour))
                     {
                         continue;
                     }
 
+                    // Calculate the new cost to move to this neighbour
                     int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour) + neighbour.movementPenalty;
+                    //UnityEngine.Debug.Log("gCost : " + neighbour.gCost + " - hCost : " + neighbour.hCost + " - Distance : " + GetDistance(currentNode, neighbour) + " - Penalty : " + neighbour.movementPenalty);
+                    
+                    // If the new cost is lower than the neighbour's current cost or it's not in the open set, update its values and add it to the open set
                     if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
                     {
                         neighbour.gCost = newMovementCostToNeighbour;
@@ -96,7 +90,7 @@ public class Pathfinding : MonoBehaviour
                 }
             }
         }
-        
+
         if (pathSuccess)
         {
             waypoints = RetracePath(startNode, targetNode);
@@ -105,6 +99,7 @@ public class Pathfinding : MonoBehaviour
 
         callback(new PathResult(waypoints, pathSuccess, request.callback));
     }
+
 
     Vector3[] RetracePath(Node startNode, Node endNode)
     {

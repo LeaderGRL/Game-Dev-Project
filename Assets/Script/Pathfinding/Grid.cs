@@ -1,3 +1,9 @@
+/*
+ * This script creates a grid of nodes in the game world for pathfinding purposes. 
+ * It uses a raycast to detect walkable terrain and calculates movement penalties based on terrain types. 
+ * It also implements a penalty blur to help smooth the pathfinding calculations. 
+ */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,22 +24,27 @@ public class Grid : MonoBehaviour
     private float nodeDiameter;
     private int gridSizeX, gridSizeY;
     private LayerMask walkableMask;
-    private Dictionary<int, int> walkableRegionDisctionnary = new Dictionary<int, int>();
+    private Dictionary<int, int> walkableRegionDictionary = new Dictionary<int, int>();
     private int penaltyMin = int.MaxValue;
     private int penaltyMax = int.MinValue;
 
     private void Awake()
     {
+        // Calculate the diameter and size of each node in the grid
         nodeDiameter = nodeRadius * 2;
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
 
+        // Combine the layer masks of all the walkable terrain types
         foreach (TerrainTypes region in walkableRegions)
         {
             walkableMask.value |= region.terrainMask.value;
-            walkableRegionDisctionnary.Add((int)Mathf.Log(region.terrainMask.value, 2), region.terrainPenalty);
+
+            // Add the movement penalty for the terrain type to the dictionary
+            walkableRegionDictionary.Add((int)Mathf.Log(region.terrainMask.value, 2), region.terrainPenalty);
         }
 
+        // Create the grid of nodes
         CreateGrid();
     }
 
@@ -54,29 +65,35 @@ public class Grid : MonoBehaviour
         {
             for (int y = 0; y < gridSizeY; y++)
             {
+                // Calculate the world position of the current node.
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.forward * (y * nodeDiameter + nodeRadius);
+
+                // Check if the current node is walkable by using a sphere check with the unwalkable layer mask.
                 bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableLayerMask));
 
                 int movementPenalty = 0;
 
-              
+                // Perform a raycast downwards from the current node and check the hit collider's layer against the walkable region dictionary to determine the movement penalty.
                 Ray ray = new Ray(worldPoint + Vector3.up * 50, Vector3.down);
                 RaycastHit hit;
 
                 if (Physics.Raycast(ray, out hit, 100, walkableMask))
                 {
-                    walkableRegionDisctionnary.TryGetValue(hit.collider.gameObject.layer, out movementPenalty);
+                    walkableRegionDictionary.TryGetValue(hit.collider.gameObject.layer, out movementPenalty);
                 }
-                
+
+                // Apply an additional obstacle proximity penalty if the current node is not walkable.
                 if (!walkable)
                 {
                     movementPenalty += obstacleProximityPenalty;
                 }
-                
+
+                // Create a new node with the calculated properties and store it in the grid array.
                 grid[x, y] = new Node(walkable, worldPoint, x, y, movementPenalty);
             }
         }
 
+        // Apply a blur penalty map to the grid to smooth out the movement penalties.
         BlurPenaltyMap(blurWeightSize);
     }
 
