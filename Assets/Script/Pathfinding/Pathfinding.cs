@@ -135,7 +135,6 @@ public class Pathfinding : MonoBehaviour
 
     // This method simplifies a path by removing waypoints that do not change direction.
     // It returns the simplified waypoints as a list of Vector3 points.
-
     Vector3[] SimplifyPath(List<Node> path)
     {
         // Create an empty list to store the waypoints
