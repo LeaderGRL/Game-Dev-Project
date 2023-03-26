@@ -69,8 +69,8 @@ public class Pathfinding : MonoBehaviour
 
                     // Calculate the new cost to move to this neighbour
                     int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour) + neighbour.movementPenalty;
-                    //UnityEngine.Debug.Log("gCost : " + neighbour.gCost + " - hCost : " + neighbour.hCost + " - Distance : " + GetDistance(currentNode, neighbour) + " - Penalty : " + neighbour.movementPenalty);
-                    
+                    //UnityEngine.Debug.Log("current.gCost : " + currentNode.gCost + "GetDistance(currentNode, neighbour) :  " + GetDistance(currentNode, neighbour));
+
                     // If the new cost is lower than the neighbour's current cost or it's not in the open set, update its values and add it to the open set
                     if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
                     {
@@ -100,60 +100,92 @@ public class Pathfinding : MonoBehaviour
         callback(new PathResult(waypoints, pathSuccess, request.callback));
     }
 
+    // This method retraces a path from the end node to the start node
+    // by following the parent nodes of each node in the path.
+    // It then simplifies the path by removing unnecessary waypoints.
+    // The resulting waypoints are returned as a Vector3 array.
 
     Vector3[] RetracePath(Node startNode, Node endNode)
     {
+        // Create an empty list to store the path
         List<Node> path = new List<Node>();
+
+        // Start at the end node
         Node currentNode = endNode;
-        
+
+        // Traverse the path by following the parent nodes of each node
         while (currentNode != startNode)
         {
+            // Add the current node to the path list
             path.Add(currentNode);
+
+            // Move to the parent node
             currentNode = currentNode.parent;
         }
 
+        // Simplify the path by removing unnecessary waypoints
         Vector3[] waypoints = SimplifyPath(path);
+
+        // Reverse the order of the waypoints so they start from the start node
         Array.Reverse(waypoints);
 
+        // Return the simplified waypoints as a Vector3 array
         return waypoints;
-
-        //grid.path = path;
     }
+
+    // This method simplifies a path by removing waypoints that do not change direction.
+    // It returns the simplified waypoints as a list of Vector3 points.
 
     Vector3[] SimplifyPath(List<Node> path)
     {
+        // Create an empty list to store the waypoints
         List<Vector3> waypoints = new List<Vector3>();
+
+        // Initialize the old direction to zero
         Vector2 directionOld = Vector2.zero;
 
+        // If the path contains more than one node, simplify it
         if (path.Count != 1)
         {
+            // Loop through all nodes in the path except the last one
             for (int i = 0; i < path.Count - 1; i++)
             {
+                // Calculate the direction from the current node to the next node
                 Vector2 directionNew = new Vector2(path[i].gridX - path[i + 1].gridX, path[i].gridY - path[i + 1].gridY);
+
+                // If the direction changes, add the current node's position to the list of waypoints
                 if (directionNew != directionOld)
                 {
                     waypoints.Add(path[i].worldPosition);
                 }
+
+                // Update the old direction to the new direction
                 directionOld = directionNew;
             }
         }
-        else
+        else // If the path only contains one node, add it to the list of waypoints
         {
             waypoints.Add(path[0].worldPosition);
         }
 
+        // Return the simplified waypoints as a Vector3 array
         return waypoints.ToArray();
     }
 
+    // This method calculates the distance between two nodes using the Manhattan distance formula
+    // It returns the distance as an integer.
     int GetDistance(Node nodeA, Node nodeB)
     {
+        // Calculate the horizontal distance between the nodes
         int distX = Mathf.Abs(nodeA.gridX - nodeB.gridX);
+
+        // Calculate the vertical distance between the nodes
         int distY = Mathf.Abs(nodeA.gridY - nodeB.gridY);
 
+        // Calculate the diagonal distance (if any) using the diagonal movement cost
         if (distX > distY)
             return 14 * distY + 10 * (distX - distY);
-
-        return 14 * distX + 10 * (distY - distX);
-
+        else
+            return 14 * distX + 10 * (distY - distX);
     }
 }
