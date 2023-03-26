@@ -10,5 +10,5 @@ public interface IMob
     float thirst { get; set; }
     float hunger { get; set; }
     float fatigue { get; set; }
-
+    float fovRange { get; set; }
 }
