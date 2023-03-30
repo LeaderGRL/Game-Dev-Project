@@ -5,13 +5,17 @@ using CodeMonkey.Utils;
 
 public class Testing : MonoBehaviour
 {
+    [SerializeField]
+    private float cameraSpeed = 20f;
     private Grid grid;
     [SerializeField] private Camera mainCamera;
+    public int GridLength;
+    public int GridWidth;
 
     // Start is called before the first frame update
     void Start()
     {
-        grid = new Grid(4, 2, 50f, new Vector3(-51, 0, 0));
+        grid = new Grid(GridLength, GridWidth, 50f, new Vector3(-25 * GridLength, 0, -25 * GridWidth));
     }
 
     private void Update()
@@ -30,6 +34,17 @@ public class Testing : MonoBehaviour
         {
             print(grid.GetValue(mousePosition));
         }
+
+        if (Input.GetAxis("Vertical") != 0)
+        {
+            transform.position += Vector3.up * Time.deltaTime * cameraSpeed * Input.GetAxis("Vertical");
+        }
+        if (Input.GetAxis("Horizontal") != 0)
+        {
+            float speed = Time.deltaTime * cameraSpeed * Input.GetAxis("Horizontal");
+            transform.position += new Vector3( 1* speed, 0, -1*speed);
+        }
+
     }
 
 }
