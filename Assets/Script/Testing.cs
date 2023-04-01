@@ -2,20 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using CodeMonkey.Utils;
+using System;
 
 public class Testing : MonoBehaviour
 {
     [SerializeField]
     private float cameraSpeed = 20f;
-    private Grid grid;
+    public Grid grid;
     [SerializeField] private Camera mainCamera;
     public int GridLength;
     public int GridWidth;
+    public GameObject BuildingToCreate;
 
     // Start is called before the first frame update
     void Start()
     {
-        grid = new Grid(GridLength, GridWidth, 50f, new Vector3(-25 * GridLength, 0, -25 * GridWidth));
+        //grid = new Grid(GridLength, GridWidth, 16f, new Vector3(-25 * GridLength, 0, -25 * GridWidth));
+        grid = new Grid(GridLength, GridWidth, 16f, new Vector3(-8 * GridLength, 0, -8 * GridWidth));
     }
 
     private void Update()
@@ -25,10 +28,25 @@ public class Testing : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit raycastHit))
         {
             mousePosition = raycastHit.point;
+            if (grid.GetValue(mousePosition) == 0)
+            {
+                int cellX = 0;
+                int cellY = 0;
+                grid.GetXY(mousePosition, out cellX, out cellY);
+                BuildingToCreate.transform.position = grid.GetWorldPosition(cellX, cellY) + new Vector3(8,0,8);
+            }
         }
         if (Input.GetMouseButtonDown(0))
         {
-            grid.SetValue(mousePosition, grid.GetValue(mousePosition) + 1);
+            if (grid.GetValue(mousePosition) == 0)
+            {
+                int cellX = 0;
+                int cellY = 0;
+                grid.GetXY(mousePosition, out cellX, out cellY);
+                GameObject newBuilding = Instantiate(BuildingToCreate);
+                newBuilding.transform.position = grid.GetWorldPosition(cellX, cellY) + new Vector3(8, 0, 8);
+            }
+            grid.SetValue(mousePosition,  1);
         }
         if (Input.GetMouseButtonDown(1))
         {

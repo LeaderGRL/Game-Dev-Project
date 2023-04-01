@@ -5,6 +5,9 @@ using UnityEngine;
 public class MousePosition3D : MonoBehaviour
 {
     [SerializeField] private Camera mainCamera;
+    private Grid grid;
+
+
 
     private void Update()
     {
