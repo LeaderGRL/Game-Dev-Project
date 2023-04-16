@@ -9,7 +9,14 @@ public class FieldOfView : MonoBehaviour
     public float angle;
     public LayerMask targetMask;
     public LayerMask obstackeMask;
+    public Transform target;
 
+    public bool canSeeTarget;
+
+    private void Start()
+    {
+        StartCoroutine(FOVRoutine());
+    }
     private IEnumerator FOVRoutine()
     {
         WaitForSeconds wait = new WaitForSeconds(0.2f);
@@ -27,7 +34,7 @@ public class FieldOfView : MonoBehaviour
 
         if (rangeChecks.Length != 0)
         {
-            Transform target = rangeChecks[0].transform;
+            target = rangeChecks[0].transform;
             Vector3 directionToTarget = (target.position - transform.position).normalized;
 
             if (Vector3.Angle(transform.forward, directionToTarget) < angle / 2)
@@ -35,10 +42,23 @@ public class FieldOfView : MonoBehaviour
                 float distanceToTarget = Vector3.Distance(transform.position, target.position);
 
                 if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstackeMask))
+                    canSeeTarget = true;
+                else
                 {
-
+                    canSeeTarget = false;
+                    target = null;
                 }
             }
+            else
+            {
+                canSeeTarget = false;
+                target = null;
+            }
+        }
+        else if (canSeeTarget)
+        {
+            canSeeTarget = false;
+            target = null;
         }
     }
 }
