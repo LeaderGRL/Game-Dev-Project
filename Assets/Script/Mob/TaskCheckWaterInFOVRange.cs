@@ -15,17 +15,29 @@ public class TaskCheckWaterInFOVRange : BehaviorTree.Node
 
     public override BehaviorTree.NodeState Evaluate()
     {
+        FieldOfView FOV = transform.GetComponent<FieldOfView>();
+        FOV.SetTargetMask("Water");
+        
         object t = GetData("target");
-        if (t == null)
+        if (t != null)
         {
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, transform.forward, out hit))
-            {
-                if (hit.collider.gameObject.CompareTag("Water"))
-                {
-                    // Faire quelque chose lorsque l'eau est détectée
-                }
-            }
+            Debug.Log("Already have a target");
+            state = NodeState.SUCCESS;
+            return state;
+        }
+
+        if (FOV.CanSeeTarget)
+        {
+            Debug.Log("Find water");
+            parent.parent.SetData("target", FOV.target.transform);
+            state = NodeState.SUCCESS;
+            return state;
+        }
+
+        if (state != NodeState.RUNNING)
+        {
+            Debug.Log("Pass to running state");
+            state = NodeState.RUNNING;
         }
 
         state = NodeState.SUCCESS;
