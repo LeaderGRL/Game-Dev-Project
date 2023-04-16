@@ -4,61 +4,93 @@ using UnityEngine;
 
 public class FieldOfView : MonoBehaviour
 {
-    public float radius;
-    [Range (0, 360)]
-    public float angle;
-    public LayerMask targetMask;
-    public LayerMask obstackeMask;
-    public Transform target;
+    public float radius = 5f;
+    [Range(0, 360)] public float angle = 90f;
 
-    public bool canSeeTarget;
+    [SerializeField] private LayerMask targetMask;
+    [SerializeField] private LayerMask obstacleMask;
+    public Transform target { get; private set; }
 
-    private void Start()
+    public bool CanSeeTarget { get; private set; }
+
+    private void Awake()
     {
         StartCoroutine(FOVRoutine());
     }
+
     private IEnumerator FOVRoutine()
     {
-        WaitForSeconds wait = new WaitForSeconds(0.2f);
-        
         while (true)
         {
-            yield return wait;
+            yield return new WaitForSeconds(0.2f);
             CheckTarget();
         }
     }
 
     private void CheckTarget()
     {
-        Collider[] rangeChecks = Physics.OverlapSphere(transform.position, radius, targetMask);
-
-        if (rangeChecks.Length != 0)
+        Collider[] rangeChecks = Physics.OverlapSphere(transform.position, radius, targetMask); // Check for target in FOV Radius
+        
+        if (rangeChecks.Length == 0)
         {
-            target = rangeChecks[0].transform;
-            Vector3 directionToTarget = (target.position - transform.position).normalized;
-
-            if (Vector3.Angle(transform.forward, directionToTarget) < angle / 2)
+            if (CanSeeTarget)
             {
-                float distanceToTarget = Vector3.Distance(transform.position, target.position);
+                CanSeeTarget = false;
+                target = null;
+            }
+            return;
+        }
 
-                if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstackeMask))
-                    canSeeTarget = true;
-                else
+        Transform closestTarget = null;
+        float closestDistance = float.MaxValue;
+
+        foreach (Collider targetCollider in rangeChecks) // Iterate over all potential targets.
+        {
+            Vector3 closestPoint = targetCollider.ClosestPoint(transform.position); // Calculate the closest point on the target's surface to the player's position
+            Transform potentialTarget = targetCollider.transform;
+            Vector3 directionToTarget = (closestPoint - transform.position).normalized;
+            Debug.Log(Vector3.Angle(transform.forward, directionToTarget) + " : " + angle/2);
+            Debug.Log("Closest position : " + closestPoint);
+            var DEB = GameObject.Find("DEB");
+            DEB.transform.position = closestPoint;
+            
+            if (Vector3.Angle(transform.forward, directionToTarget) < angle / 2) // Check if the target is within the FOV angle.
+            {
+                
+                float distanceToTarget = Vector3.Distance(transform.position, closestPoint);
+                //directionToTarget = (closestPoint - transform.position).normalized;
+
+                if (distanceToTarget < closestDistance) // If the target is the closest yet and not obstructed, set as new target.
                 {
-                    canSeeTarget = false;
-                    target = null;
+                    if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstacleMask))
+                    {
+                        Debug.Log("TEST");
+                        closestTarget = potentialTarget;
+                        closestDistance = distanceToTarget;
+                    }
                 }
+                
+            }
+
+            if (closestTarget != null)
+            {
+                if (!CanSeeTarget)
+                {
+                    CanSeeTarget = true;
+                }
+                target = closestTarget;
+                Debug.Log(target.name);
+
             }
             else
             {
-                canSeeTarget = false;
-                target = null;
+                if (CanSeeTarget)
+                {
+                    CanSeeTarget = false;
+                    target = null;
+                }
             }
-        }
-        else if (canSeeTarget)
-        {
-            canSeeTarget = false;
-            target = null;
+
         }
     }
 }
