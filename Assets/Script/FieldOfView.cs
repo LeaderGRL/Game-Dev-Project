@@ -30,7 +30,7 @@ public class FieldOfView : MonoBehaviour
     private void CheckTarget()
     {
         Collider[] rangeChecks = Physics.OverlapSphere(transform.position, radius, targetMask); // Check for target in FOV Radius
-
+        
         if (rangeChecks.Length == 0)
         {
             if (CanSeeTarget)
@@ -53,10 +53,10 @@ public class FieldOfView : MonoBehaviour
             //Debug.Log("Closest position : " + closestPoint);
             //var DEB = GameObject.Find("DEB");
             //DEB.transform.position = closestPoint;
-
+            
             if (Vector3.Angle(transform.forward, directionToTarget) < angle / 2) // Check if the target is within the FOV angle.
             {
-
+                
                 float distanceToTarget = Vector3.Distance(transform.position, closestPoint);
                 //directionToTarget = (closestPoint - transform.position).normalized;
 
@@ -69,7 +69,7 @@ public class FieldOfView : MonoBehaviour
                         closestDistance = distanceToTarget;
                     }
                 }
-
+                
             }
 
             if (closestTarget != null)

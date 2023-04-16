@@ -22,6 +22,7 @@ public class TaskWander : BehaviorTree.Node
         }
 
         _transform.position = Vector3.MoveTowards(_transform.position, _targetPosition, 1 * Time.deltaTime);
+        _transform.rotation = Quaternion.LookRotation(_targetPosition - _transform.position);
 
         if (_transform.position == _targetPosition)
         {
