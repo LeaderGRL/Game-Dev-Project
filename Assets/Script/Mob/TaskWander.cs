@@ -7,25 +7,31 @@ using BehaviorTree;
 public class TaskWander : BehaviorTree.Node
 {
     private Transform _transform;
-    private Vector3 _targetPosition;
+    private Vector3 _targetPosition = Vector3.zero;
+    private Unit _unitPathfinding;
     
-    public TaskWander(Transform transform, Vector3 targetPosition)
+    public TaskWander(Transform transform, Unit unitPathfinding)
     {
         _transform = transform;
-        _targetPosition = targetPosition;
+        _unitPathfinding = unitPathfinding;
     }
     public override NodeState Evaluate()
     {
         if (_targetPosition == Vector3.zero)
         {
-            _targetPosition = new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10));
+            Debug.Log("TEST");
+            _targetPosition = new Vector3(Random.Range(-10, 10), 1.0f, Random.Range(-10, 10));
         }
 
-        _transform.position = Vector3.MoveTowards(_transform.position, _targetPosition, 1 * Time.deltaTime);
-        _transform.rotation = Quaternion.LookRotation(_targetPosition - _transform.position);
-
-        if (_transform.position == _targetPosition)
+        _unitPathfinding.target = _targetPosition;
+        _unitPathfinding.StartCoroutine(_unitPathfinding.UpdatePath());
+        //_transform.position = Vector3.MoveTowards(_transform.position, _targetPosition, 1 * Time.deltaTime);
+        //_transform.rotation = Quaternion.LookRotation(_targetPosition - _transform.position);
+        //Vector3.ClampMagnitude(_targetPosition, 10.0f);
+        //Debug.Log(Mathf.Abs(Vector3.Distance(_targetPosition, _transform.position)));
+        if (Mathf.Abs(Vector3.Distance(_targetPosition, _transform.position)) < 1f)
         {
+            _unitPathfinding.StopAllCoroutines();
             _targetPosition = Vector3.zero;
             return NodeState.SUCCESS;
         }

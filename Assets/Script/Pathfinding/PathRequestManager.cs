@@ -83,6 +83,7 @@ public struct PathRequest
         pathEnd = _end;
         callback = _callback;
     }
+
 }
 
 public struct PathResult

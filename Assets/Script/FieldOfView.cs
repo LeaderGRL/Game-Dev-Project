@@ -10,6 +10,7 @@ public class FieldOfView : MonoBehaviour
     [SerializeField] private LayerMask targetMask;
     [SerializeField] private LayerMask obstacleMask;
     public Transform target { get; private set; }
+    public Vector3 targetClosestPoint { get; private set; }
 
     public bool CanSeeTarget { get; private set; }
 
@@ -79,6 +80,7 @@ public class FieldOfView : MonoBehaviour
                     CanSeeTarget = true;
                 }
                 target = closestTarget;
+                targetClosestPoint = closestPoint;
                 //Debug.Log(target.name);
 
             }

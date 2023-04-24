@@ -29,7 +29,7 @@ public class TaskCheckWaterInFOVRange : BehaviorTree.Node
         if (FOV.CanSeeTarget)
         {
             Debug.Log("Find water");
-            parent.parent.SetData("target", FOV.target.transform);
+            parent.parent.SetData("target", FOV.targetClosestPoint);
             state = NodeState.SUCCESS;
             return state;
         }
